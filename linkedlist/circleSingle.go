@@ -10,45 +10,69 @@ func newCircleSingleLinkedList() ILinkedList {
 }
 
 func (cs *circleSingleLinkedList) GetSize() int {
-	panic("implement me")
+	return cs.size
 }
 
 func (cs *circleSingleLinkedList) IsEmpty() bool {
-	panic("implement me")
+	return cs.size == 0
 }
 
 func (cs *circleSingleLinkedList) AddHead(element interface{}) {
-	panic("implement me")
+	cs.Add(0, element)
 }
 
 func (cs *circleSingleLinkedList) AddTail(element interface{}) {
-	panic("implement me")
+	cs.Add(cs.size, element)
 }
 
 func (cs *circleSingleLinkedList) Add(index int, element interface{}) {
+	rangeCheckForAdd(cs.size, index)
 	panic("implement me")
 }
 
 func (cs *circleSingleLinkedList) Remove(index int) interface{} {
+	rangeCheck(cs.size, index)
 	panic("implement me")
 }
 
 func (cs *circleSingleLinkedList) Clear() {
-	panic("implement me")
+	cs.size = 0
+	cs.head = nil
+	cs.last = nil
 }
 
 func (cs *circleSingleLinkedList) Set(index int, element interface{}) interface{} {
-	panic("implement me")
+	rangeCheck(cs.size, index)
+	node := cs.getNode(index)
+	oldValue := node.ele
+	node.ele = element
+	return oldValue
 }
 
 func (cs *circleSingleLinkedList) Contains(element interface{}) bool {
-	panic("implement me")
+	return cs.IndexOf(element) != ElementNotFound
 }
 
 func (cs *circleSingleLinkedList) Get(index int) interface{} {
-	panic("implement me")
+	rangeCheck(cs.size, index)
+	node := cs.getNode(index)
+	return node.ele
 }
 
 func (cs *circleSingleLinkedList) IndexOf(element interface{}) int {
-	panic("implement me")
+	node := cs.head
+	for i := 0; i < cs.size; i++ {
+		if node.ele == element {
+			return i
+		}
+		node = node.next
+	}
+	return ElementNotFound
+}
+func (cs *circleSingleLinkedList) getNode(index int) *singleNode {
+	node := cs.head
+	for i := 0; i < index; i++ {
+		node = node.next
+	}
+	return node
 }
