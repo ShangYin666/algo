@@ -2,7 +2,6 @@ package array
 
 import (
 	"fmt"
-	_ "runtime/pprof"
 	"strings"
 )
 
