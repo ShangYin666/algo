@@ -5,7 +5,8 @@ type circleSingleLinkedList struct {
 	head, last *singleNode
 }
 
-func newCircleSingleLinkedList() ILinkedList {
+// NewCircleSingleLinkedList 初始化
+func NewCircleSingleLinkedList() ILinkedList {
 	return &circleSingleLinkedList{head: nil, last: nil}
 }
 

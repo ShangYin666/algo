@@ -13,7 +13,8 @@ type doublyLinkedList struct {
 	last *doublyNode
 }
 
-func newDoublyLinkedList() ILinkedList {
+// NewDoublyLinkedList 初始化
+func NewDoublyLinkedList() ILinkedList {
 	return &doublyLinkedList{head: nil}
 }
 
@@ -125,11 +126,12 @@ func (d *doublyLinkedList) getNode(index int) *doublyNode {
 			node = node.next
 		}
 		return node
-	} else { // 向前查找元素
-		node := d.last
-		for i := d.size - 1; i > index; i-- {
-			node = node.prev
-		}
-		return node
 	}
+	// 向前查找元素
+	node := d.last
+	for i := d.size - 1; i > index; i-- {
+		node = node.prev
+	}
+	return node
+
 }

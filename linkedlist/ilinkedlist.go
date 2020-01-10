@@ -1,6 +1,6 @@
 package linkedlist
 
-// 链表公共接口定义
+// ILinkedList 链表公共接口定义
 type ILinkedList interface {
 	// 常规操作
 	GetSize() int  // 元素的数量

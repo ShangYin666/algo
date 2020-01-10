@@ -1,8 +1,6 @@
 package array
 
 import (
-	"fmt"
-	"strings"
 	"testing"
 )
 
@@ -17,17 +15,16 @@ func TestArray_Add(t *testing.T) {
 	}
 	arr.AddHead(0)
 	arr.Traverse()
-	fmt.Printf("数组容量为：%d\n", arr.GetCapacity())
-	fmt.Println(arr.IsEmpty(), arr.Contains(44), arr.IndexOf(44))
+	t.Logf("数组容量为：%d\n", arr.GetCapacity())
+	t.Log(arr.IsEmpty(), arr.Contains(44), arr.IndexOf(44))
 
-	fmt.Println(strings.Repeat("-", 200))
 	arr.Remove(0)
 	arr.Traverse()
 	arr.Set(1, 22)
-	fmt.Printf("数组容量为：%d\n", arr.GetCapacity())
-	fmt.Println(arr.GetLength(), arr.IsEmpty(), arr.Contains(44), arr.IndexOf(44))
+	t.Logf("数组容量为：%d\n", arr.GetCapacity())
+	t.Log(arr.GetLength(), arr.IsEmpty(), arr.Contains(44), arr.IndexOf(44))
 	arr.Clear()
-	fmt.Println(arr.GetLength(), arr.IsEmpty())
+	t.Log(arr.GetLength(), arr.IsEmpty())
 }
 
 func BenchmarkArray_AddHead(b *testing.B) {

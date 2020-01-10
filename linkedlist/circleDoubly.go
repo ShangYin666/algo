@@ -5,7 +5,8 @@ type circleDoublyLinkedList struct {
 	head, last *doublyNode
 }
 
-func newCircleDoublyLinkedList() ILinkedList {
+// NewCircleDoublyLinkedList 初始化
+func NewCircleDoublyLinkedList() ILinkedList {
 	return &circleDoublyLinkedList{head: nil, last: nil}
 }
 
@@ -75,11 +76,10 @@ func (cd *circleDoublyLinkedList) getNode(index int) *doublyNode {
 			node = node.next
 		}
 		return node
-	} else {
-		node := cd.last
-		for i := cd.size - 1; i > index; i-- {
-			node = node.prev
-		}
-		return node
 	}
+	node := cd.last
+	for i := cd.size - 1; i > index; i-- {
+		node = node.prev
+	}
+	return node
 }

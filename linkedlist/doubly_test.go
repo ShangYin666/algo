@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-var d = newDoublyLinkedList()
+var d = NewDoublyLinkedList()
 
 func Test_doublyLinkedList_Add(t *testing.T) {
 	for i := 4; i > 0; i-- {

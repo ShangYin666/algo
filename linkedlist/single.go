@@ -10,6 +10,7 @@ type singleLinkedList struct {
 	head *singleNode
 }
 
+// NewSingleLinkedList 初始化
 func NewSingleLinkedList() ILinkedList {
 	return &singleLinkedList{head: nil}
 }
