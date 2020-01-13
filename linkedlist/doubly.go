@@ -1,7 +1,5 @@
 package linkedlist
 
-import "fmt"
-
 type doublyNode struct {
 	ele        interface{}
 	prev, next *doublyNode
@@ -38,27 +36,28 @@ func (d *doublyLinkedList) AddTail(element interface{}) {
 // 链表为空 和 前插 中插 后插 三种情况
 // 中插和后插可以看作是往当前节点的前一个节点的追加操作
 func (d *doublyLinkedList) Add(index int, element interface{}) {
+	//  index < 0 || index > s.size  => out of range
 	rangeCheckForAdd(d.size, index)
-	newNode := &doublyNode{ele: element}
-	if d.head == nil {
-		d.head = newNode
-		d.last = newNode
-	} else if index == 0 {
-		d.head.prev = newNode
-		newNode.next = d.head
-		d.head = newNode
-	} else {
-		prevNode := d.getNode(index - 1) // 前驱节点
-		nextNode := prevNode.next        // 后继节点
-		if nextNode != nil {
-			nextNode.prev = newNode
+	if d.size == index { // 往后面添加节点
+		oldLast := d.last
+		node := &doublyNode{ele: element, prev: oldLast, next: nil}
+		if oldLast == nil {
+			d.head = node
+			d.last = node
+		} else {
+			d.last = node
+			oldLast.next = node
 		}
-		prevNode.next = newNode
-
-		newNode.prev = prevNode
-		newNode.next = nextNode
-		if d.size == index {
-			d.last = newNode
+	} else {
+		next := d.node(index) // 后一个节点
+		prev := next.prev     // 前一个节点
+		// 创建新节点, prev指向原链表的尾节点, next指向首节点
+		node := &doublyNode{ele: element, prev: prev, next: next}
+		next.prev = node
+		if prev != nil { // 非头节点插入
+			prev.next = node
+		} else {
+			d.head = node
 		}
 	}
 	d.size++
@@ -68,19 +67,18 @@ func (d *doublyLinkedList) Add(index int, element interface{}) {
 // 前 中 后 删除
 func (d *doublyLinkedList) Remove(index int) interface{} {
 	rangeCheck(d.size, index)
-	node := d.getNode(index)
+
+	node := d.node(index)
 	preNode := node.prev
-	nextNode := node.next
+	next := node.next
 	if preNode != nil {
 		preNode.next = preNode.next.next
 	} else { // 头节点
-		fmt.Println("000-0000")
 		d.head = node.next
 	}
-	if nextNode != nil {
-		nextNode.prev = nextNode.prev.prev
+	if next != nil {
+		next.prev = next.prev.prev
 	} else { // 尾节点
-		fmt.Println("1111-111")
 		d.last = preNode
 	}
 	d.size--
@@ -94,7 +92,7 @@ func (d *doublyLinkedList) Clear() {
 
 func (d *doublyLinkedList) Set(index int, element interface{}) interface{} {
 	rangeCheck(d.size, index)
-	node := d.getNode(index)
+	node := d.node(index)
 	oldValue := node.ele
 	node.ele = element
 	return oldValue
@@ -105,7 +103,7 @@ func (d *doublyLinkedList) Contains(element interface{}) bool {
 }
 
 func (d *doublyLinkedList) Get(index int) interface{} {
-	return d.getNode(index)
+	return d.node(index)
 }
 
 func (d *doublyLinkedList) IndexOf(element interface{}) int {
@@ -119,8 +117,8 @@ func (d *doublyLinkedList) IndexOf(element interface{}) int {
 	return ElementNotFound
 }
 
-func (d *doublyLinkedList) getNode(index int) *doublyNode {
-	if index <= d.size>>1 { // 向后查找节点  d.size==7   则 d.size>>1 == 3
+func (d *doublyLinkedList) node(index int) *doublyNode {
+	if index < d.size>>1 { // 向后查找节点  d.size==7   则 d.size>>1 == 3
 		node := d.head
 		for i := 0; i < index; i++ {
 			node = node.next
@@ -133,5 +131,4 @@ func (d *doublyLinkedList) getNode(index int) *doublyNode {
 		node = node.prev
 	}
 	return node
-
 }

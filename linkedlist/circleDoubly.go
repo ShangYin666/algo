@@ -1,5 +1,7 @@
 package linkedlist
 
+import "fmt"
+
 type circleDoublyLinkedList struct {
 	size       int
 	head, last *doublyNode
@@ -28,6 +30,43 @@ func (cd *circleDoublyLinkedList) AddTail(element interface{}) {
 
 func (cd *circleDoublyLinkedList) Add(index int, element interface{}) {
 	rangeCheckForAdd(cd.size, index)
+	newNode := &doublyNode{ele: element}
+	if index == cd.size { // 链表为空 或者 在链表末尾追加节点
+		if index == 0 { // 空链表
+			cd.head = newNode
+			cd.last = newNode
+			cd.head.next = cd.last
+			cd.head.prev = cd.last
+			cd.last.next = cd.head
+			cd.last.prev = cd.head
+
+		} else { // 链表末尾追加节点
+			prevNode := cd.getNode(index - 1)
+			nextNode := prevNode.next
+
+			newNode.next = nextNode
+			newNode.prev = prevNode
+
+			prevNode.next = newNode
+			nextNode.prev = newNode
+		}
+
+	} else { // 链表中间加入节点
+		prevNode := cd.getNode(index - 1)
+		if index == 0 {
+			prevNode = cd.last
+		}
+
+		fmt.Println(cd.size, prevNode)
+		nextNode := prevNode.next
+
+		newNode.next = nextNode
+		newNode.prev = prevNode
+
+		prevNode.next = newNode
+		nextNode.prev = newNode
+	}
+	cd.size++
 }
 
 func (cd *circleDoublyLinkedList) Remove(index int) interface{} {

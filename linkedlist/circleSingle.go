@@ -2,12 +2,12 @@ package linkedlist
 
 type circleSingleLinkedList struct {
 	size       int
-	head, last *singleNode
+	head  *singleNode
 }
 
 // NewCircleSingleLinkedList 初始化
 func NewCircleSingleLinkedList() ILinkedList {
-	return &circleSingleLinkedList{head: nil, last: nil}
+	return &circleSingleLinkedList{head: nil}
 }
 
 func (cs *circleSingleLinkedList) GetSize() int {
@@ -26,20 +26,56 @@ func (cs *circleSingleLinkedList) AddTail(element interface{}) {
 	cs.Add(cs.size, element)
 }
 
+// 环形单链表节点插入操作
+// 前 中 后三个位置插入，需要考虑链表为空的情况
 func (cs *circleSingleLinkedList) Add(index int, element interface{}) {
 	rangeCheckForAdd(cs.size, index)
-	panic("implement me")
+
+	newNode := &singleNode{ele: element}
+	if index == 0 { // 头插入
+		// 获取最后一个节点
+		lastNode := cs.getNode(cs.size -1 )
+		if lastNode == nil {
+			lastNode = newNode
+		}
+		// 更新头节点
+		newNode.next = cs.head
+		cs.head = newNode
+		// 将尾节点的next指针指向头节点
+		lastNode.next = cs.head
+	} else {
+		prevNode := cs.getNode(index - 1)
+		next := prevNode.next
+		prevNode.next = newNode
+		newNode.next = next
+	}
+
+	cs.size++
 }
 
+// 删除节点
 func (cs *circleSingleLinkedList) Remove(index int) interface{} {
 	rangeCheck(cs.size, index)
-	panic("implement me")
+	node := cs.head
+	if index == 0 { // 删除头节点
+		if cs.size == 1 {  // 只有一个元素
+			cs.head = nil
+		}else{
+			node := cs.head
+			cs.head = node.next
+		}
+	} else {  // 删除中间节点 或者 是尾节点
+		prevNode := cs.getNode(index - 1)
+		node = prevNode.next
+		prevNode.next = node.next
+	}
+	cs.size--
+	return node.ele
 }
 
 func (cs *circleSingleLinkedList) Clear() {
 	cs.size = 0
 	cs.head = nil
-	cs.last = nil
 }
 
 func (cs *circleSingleLinkedList) Set(index int, element interface{}) interface{} {

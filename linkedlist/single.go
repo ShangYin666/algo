@@ -36,38 +36,34 @@ func (s *singleLinkedList) AddTail(element interface{}) {
 // 链表为空或者中后添加都可以看作是元素追加
 func (s *singleLinkedList) Add(index int, element interface{}) {
 	rangeCheckForAdd(s.size, index)
-	newNode := &singleNode{ele: element}
-	if s.head == nil { // 空链表
-		s.head = newNode
-	} else if index == 0 {
+	newNode := &singleNode{ele: element, next: s.head}
+	if index == 0 {
 		// 前插入  将新节点的next指向链表的头节点，然后再将链表的头节点更新为该新节点
-		newNode.next = s.head
 		s.head = newNode
 	} else {
 		// 中间插入或者尾部插入
-		// 3 的位置插入，则 新节点 添加到 3 的位置，所以获取 3 的前一个节点，将其next指向新的节点，新节点的next等于该节点（下标为2的节点）的next
-		prevNode := s.getNode(index - 1)
-		newNode.next = prevNode.next
-		prevNode.next = newNode
+		prev := s.node(index - 1)
+		newNode.next = prev.next
+		prev.next = newNode
 	}
 
 	s.size++
 }
 
 // 删除节点
-// 前 中 后 三种删除
 func (s *singleLinkedList) Remove(index int) (oldValue interface{}) {
+	//  index < 0 || index > s.size  => out of range
 	rangeCheck(s.size, index)
+	node := s.head
 	if index == 0 { //  删除头节点
-		oldValue = s.head.ele
 		s.head = s.head.next
-	} else {
-		node := s.getNode(index - 1)
-		oldValue = node.next.ele
-		node.next = node.next.next
+	} else { // 删除中间节点或者尾部节点
+		prev := s.node(index - 1)
+		node = prev.next
+		prev.next = node.next
 	}
 	s.size--
-	return
+	return node.ele
 }
 
 func (s *singleLinkedList) Clear() {
@@ -77,7 +73,7 @@ func (s *singleLinkedList) Clear() {
 
 func (s *singleLinkedList) Set(index int, element interface{}) interface{} {
 	rangeCheck(s.size, index)
-	node := s.getNode(index)
+	node := s.node(index)
 	oldValue := node.ele
 	node.ele = element
 	return oldValue
@@ -89,7 +85,7 @@ func (s *singleLinkedList) Contains(element interface{}) bool {
 
 func (s *singleLinkedList) Get(index int) interface{} {
 	rangeCheck(s.size, index)
-	return s.getNode(index).ele
+	return s.node(index).ele
 }
 
 func (s *singleLinkedList) IndexOf(element interface{}) int {
@@ -106,7 +102,7 @@ func (s *singleLinkedList) IndexOf(element interface{}) int {
 }
 
 // 根据节点位置查询节点
-func (s *singleLinkedList) getNode(index int) *singleNode {
+func (s *singleLinkedList) node(index int) *singleNode {
 	node := s.head
 	for i := 0; i < index; i++ {
 		node = node.next
