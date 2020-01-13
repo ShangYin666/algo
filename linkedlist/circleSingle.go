@@ -1,8 +1,8 @@
 package linkedlist
 
 type circleSingleLinkedList struct {
-	size       int
-	head  *singleNode
+	size int
+	head *singleNode
 }
 
 // NewCircleSingleLinkedList 初始化
@@ -31,25 +31,21 @@ func (cs *circleSingleLinkedList) AddTail(element interface{}) {
 func (cs *circleSingleLinkedList) Add(index int, element interface{}) {
 	rangeCheckForAdd(cs.size, index)
 
-	newNode := &singleNode{ele: element}
-	if index == 0 { // 头插入
-		// 获取最后一个节点
-		lastNode := cs.getNode(cs.size -1 )
-		if lastNode == nil {
-			lastNode = newNode
+	if index == 0 {
+		newHead := &singleNode{ele: element, next: cs.head}
+		// 拿到最后一个节点
+		last := cs.node(cs.size - 1)
+		if last == nil {
+			last = newHead
 		}
-		// 更新头节点
-		newNode.next = cs.head
-		cs.head = newNode
-		// 将尾节点的next指针指向头节点
-		lastNode.next = cs.head
-	} else {
-		prevNode := cs.getNode(index - 1)
-		next := prevNode.next
-		prevNode.next = newNode
-		newNode.next = next
-	}
+		last.next = newHead
 
+		// 将新节点赋值给head节点
+		cs.head = newHead
+	} else {
+		prev := cs.node(index - 1)
+		prev.next = &singleNode{element, prev.next}
+	}
 	cs.size++
 }
 
@@ -58,14 +54,14 @@ func (cs *circleSingleLinkedList) Remove(index int) interface{} {
 	rangeCheck(cs.size, index)
 	node := cs.head
 	if index == 0 { // 删除头节点
-		if cs.size == 1 {  // 只有一个元素
+		if cs.size == 1 { // 只有一个元素
 			cs.head = nil
-		}else{
+		} else {
 			node := cs.head
 			cs.head = node.next
 		}
-	} else {  // 删除中间节点 或者 是尾节点
-		prevNode := cs.getNode(index - 1)
+	} else { // 删除中间节点 或者 是尾节点
+		prevNode := cs.node(index - 1)
 		node = prevNode.next
 		prevNode.next = node.next
 	}
@@ -80,7 +76,7 @@ func (cs *circleSingleLinkedList) Clear() {
 
 func (cs *circleSingleLinkedList) Set(index int, element interface{}) interface{} {
 	rangeCheck(cs.size, index)
-	node := cs.getNode(index)
+	node := cs.node(index)
 	oldValue := node.ele
 	node.ele = element
 	return oldValue
@@ -92,7 +88,7 @@ func (cs *circleSingleLinkedList) Contains(element interface{}) bool {
 
 func (cs *circleSingleLinkedList) Get(index int) interface{} {
 	rangeCheck(cs.size, index)
-	node := cs.getNode(index)
+	node := cs.node(index)
 	return node.ele
 }
 
@@ -106,7 +102,7 @@ func (cs *circleSingleLinkedList) IndexOf(element interface{}) int {
 	}
 	return ElementNotFound
 }
-func (cs *circleSingleLinkedList) getNode(index int) *singleNode {
+func (cs *circleSingleLinkedList) node(index int) *singleNode {
 	node := cs.head
 	for i := 0; i < index; i++ {
 		node = node.next

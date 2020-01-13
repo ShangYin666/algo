@@ -1,7 +1,5 @@
 package linkedlist
 
-import "fmt"
-
 type circleDoublyLinkedList struct {
 	size       int
 	head, last *doublyNode
@@ -30,48 +28,59 @@ func (cd *circleDoublyLinkedList) AddTail(element interface{}) {
 
 func (cd *circleDoublyLinkedList) Add(index int, element interface{}) {
 	rangeCheckForAdd(cd.size, index)
-	newNode := &doublyNode{ele: element}
-	if index == cd.size { // 链表为空 或者 在链表末尾追加节点
-		if index == 0 { // 空链表
+	// 如果 index == size, 说明添加的索引是最后位置
+	if cd.size == index {
+		// 创建新节点, prev指向原链表的尾节点, next指向首节点
+		newNode := &doublyNode{next: cd.head, prev: cd.last, ele: element}
+		if cd.size == 0 { // 空链表
 			cd.head = newNode
 			cd.last = newNode
-			cd.head.next = cd.last
-			cd.head.prev = cd.last
-			cd.last.next = cd.head
-			cd.last.prev = cd.head
-
-		} else { // 链表末尾追加节点
-			prevNode := cd.getNode(index - 1)
-			nextNode := prevNode.next
-
-			newNode.next = nextNode
-			newNode.prev = prevNode
-
-			prevNode.next = newNode
-			nextNode.prev = newNode
+			newNode.prev = cd.last
+			newNode.next = cd.last
+		} else {
+			// 原链表尾节点next指向newNode
+			cd.last.next = newNode
+			// 原链表头结点prev指向newNode
+			cd.head.prev = newNode
+			// last指向新的尾节点
+			cd.last = newNode
 		}
-
-	} else { // 链表中间加入节点
-		prevNode := cd.getNode(index - 1)
-		if index == 0 {
-			prevNode = cd.last
+	} else {
+		// 中间节点或者首节点
+		next := cd.node(index)
+		prev := next.prev
+		newNode := &doublyNode{element, prev, next}
+		prev.next = newNode
+		next.prev = newNode
+		if index == 0 { //  如果是首节点添加元素
+			cd.head = newNode
 		}
-
-		fmt.Println(cd.size, prevNode)
-		nextNode := prevNode.next
-
-		newNode.next = nextNode
-		newNode.prev = prevNode
-
-		prevNode.next = newNode
-		nextNode.prev = newNode
 	}
 	cd.size++
 }
 
 func (cd *circleDoublyLinkedList) Remove(index int) interface{} {
 	rangeCheck(cd.size, index)
-	panic("implement me")
+	node := cd.node(index)
+	if cd.size == 1 {
+		cd.head = nil
+		cd.last = nil
+	} else {
+		prev := node.prev
+		next := node.next
+		next.prev = prev
+		prev.next = next
+		// 如果node == cd.head, 说明删除的是第一个节点
+		if node == cd.head {
+			cd.head = next
+		}
+		// 如果next == cd.last, 说明删除的是最后一个节点
+		if next == cd.last {
+			cd.last = prev
+		}
+	}
+	cd.size--
+	return node.ele
 }
 
 func (cd *circleDoublyLinkedList) Clear() {
@@ -82,7 +91,7 @@ func (cd *circleDoublyLinkedList) Clear() {
 
 func (cd *circleDoublyLinkedList) Set(index int, element interface{}) interface{} {
 	rangeCheck(cd.size, index)
-	node := cd.getNode(index)
+	node := cd.node(index)
 	oldValue := node.ele
 	node.ele = element
 	return oldValue
@@ -94,7 +103,7 @@ func (cd *circleDoublyLinkedList) Contains(element interface{}) bool {
 
 func (cd *circleDoublyLinkedList) Get(index int) interface{} {
 	rangeCheck(cd.size, index)
-	return cd.getNode(index).ele
+	return cd.node(index).ele
 }
 
 func (cd *circleDoublyLinkedList) IndexOf(element interface{}) int {
@@ -108,7 +117,7 @@ func (cd *circleDoublyLinkedList) IndexOf(element interface{}) int {
 	return ElementNotFound
 }
 
-func (cd *circleDoublyLinkedList) getNode(index int) *doublyNode {
+func (cd *circleDoublyLinkedList) node(index int) *doublyNode {
 	if index <= cd.size>>1 {
 		node := cd.head
 		for i := 0; i < index; i++ {

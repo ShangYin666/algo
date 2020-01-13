@@ -36,14 +36,11 @@ func (s *singleLinkedList) AddTail(element interface{}) {
 // 链表为空或者中后添加都可以看作是元素追加
 func (s *singleLinkedList) Add(index int, element interface{}) {
 	rangeCheckForAdd(s.size, index)
-	newNode := &singleNode{ele: element, next: s.head}
-	if index == 0 {
-		// 前插入  将新节点的next指向链表的头节点，然后再将链表的头节点更新为该新节点
-		s.head = newNode
-	} else {
-		// 中间插入或者尾部插入
+	if s.size == 0 { // 头节点添加或尾节点追加
+		s.head = &singleNode{ele: element, next: nil}
+	} else { // 中间节点添加
 		prev := s.node(index - 1)
-		newNode.next = prev.next
+		newNode := &singleNode{ele: element, next: prev.next}
 		prev.next = newNode
 	}
 
